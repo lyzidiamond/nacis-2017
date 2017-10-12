@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+  <title>Big</title>
+  <link href='big.css' rel='stylesheet' type='text/css' />
+  <link href='highlight.min.css' rel='stylesheet' type='text/css' />
+  <style>
+    .new-shiny { background: #aaaaaa; }
+    .nobreak {
+      white-space:pre;
+    }
+    @-webkit-keyframes blinker {
+      from { opacity: 1.0; }
+      to { opacity: 0.5; }
+    }
+    .blink {
+      -webkit-animation-name: blinker;
+      -webkit-animation-iteration-count: infinite;
+      -webkit-animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+      -webkit-animation-duration: 800ms;
+    }
+    body.background-repeat {
+      background-size: auto;
+      background-repeat: repeat;
+  }
+  .center-image {
+    background-position: top center;
+  }
+  </style>
+  <script src='big.js'></script>
+  <script src='highlight.js'></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+  <div>
+    <span style='color:#1668B2;'>Projections and datums in <br>web mapping: an introduction</span>
+    <br /><br />
+    <center><img src='http://bestanimations.com/Military/Explosions/earth-explosion-animated-gif.gif' /></center>
+    <small class='nobreak'>Lyzi Diamond | NACIS 2017 | Montreal, QC</small>
+  </div>
+  <div class='blink'>ARE YOU READY TO TALK ABOUT MATH?!</div>
+  <div>This talk is based on a <a href='http://lyzidiamond.com/posts/4326-vs-3857'>blog post</a> I wrote, so don't scramble to write everything down.</div>
+  <div>This talk:
+    <br />
+    <ol>
+      <li>A reintroduction to <strong>projections and datums</strong> (aka <em>geodesy</em>)</li>
+      <li>An overview of the <em>coordinate systems</em> we use in web mapping</li>
+      <li>An impassioned defense of <strong>spherical mercator</strong> (maybe)</li>
+      <li>Lots of bad doodles by yours truly <em>(not an artist)</em></li>
+    </ol>
+  </div>
+  <div>1. Projections, datums, coordinate systems, <strong>WHY?!</strong></div>
+  <div>
+    A truth: <em>Maps are tools for communication</em>
+    <notes>In the cartography context, we think about communicating specific types of information visually on the map. But the visual map is only a small part of what geospatial technology allows us to do. Spatial data is used to find places, calculate distances, analyze phenomena. The visual output is great and important, but underneath it is a bunch of other information that is also important and without it, we would be lost. Literally and figuratively.</notes>
+  </div>
+  <div>
+    In order to communicate about <em>physical locations</em>, we need to have a <strong>common system</strong> that we can use as a guide.
+  </div>
+  <div>
+    In our mappy world, these are called <em>coordinate reference systems</em>, and they determine how maps <strong>look</strong>, how data is <strong>stored</strong>, and how distance is <strong>calculated</strong>.
+    <notes>"Walk three blocks and then turn left" doesn't work as well if you don't know where the directions are starting from.</notes>
+  </div>
+  <div>
+    <em>How do these reference systems come to be?</em> Well I sure am glad you asked!
+  </div>
+  <div>
+    Geodesy: measuring the earth
+    <br /><br />
+    <center><img src='https://d2mxuefqeaa7sj.cloudfront.net/s_9F4AD171844C3ED7BEA0576DEA6B40C1F73FB55B727BF153214AFDDBD85A8F35_1495826944339_measure.jpg' style='width:50%;' /></center>
+  </div>
+  <div>What does the Earth look like?</div>
+  <div>A sphere? Nope.<br /><center><img src='https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Sphere_wireframe_10deg_6r.svg/1200px-Sphere_wireframe_10deg_6r.svg.png' style='width:50%'></center></div>
+  <div>A spheroid? Nope.<br /><center><img src='http://gisgeography.com/wp-content/uploads/2016/05/Oblate-Spheroid.png' style='width: 50%'></center></div>
+  <div>An ellipsoid? Nope.<br /><center><img src='http://mathworld.wolfram.com/images/eps-gif/EllipsoidMercator_1000.gif' style='width:50%' /></center></div>
+  <div>
+    Its own weird crazy shape? Yes! (thx 4 this img Mike Foster)<br /><center><img src='https://mjfoster83.github.io/projections/lib/img/lumpy-earth.png' style='width:50%' /></center>
+    <notes>in reality the earth is its own crazy wonky lumpy shape that is constantly changing in four dimensions with mass movements and human behavior. It also has inconsistent density (and thus an inconsistent gravitational pull), making it even harder to model.</notes>
+  </div>
+  <div>
+    The <em>real</em> shape of the earth is <strong>too complex</strong> to be <span style='color:#0B877D'>useful</span> as a reference for measurement.
+  </div>
+  <div>
+    Instead, we use a <strong>reference ellipsoid</strong> to approximate the planet's surface.
+    <notes>Instead, we use a reference ellipsoid as an approximation of the surface of the earth. A reference ellipsoid is a mathematically-defined surface that roughly matches the model of the earth when its topographical features are removed (the lovely lumpy geoid, a model of the earth with assumed equal density).</notes>
+  </div>
+  <div>
+    Just like in dating, the perfect mathematical ellipsoid does not exist.
+    <br />
+    <img src='https://d2mxuefqeaa7sj.cloudfront.net/s_9F4AD171844C3ED7BEA0576DEA6B40C1F73FB55B727BF153214AFDDBD85A8F35_1495826975339_localdatum.jpg' />
+    <notes>There is not a single canonical ellipsoid that is used to measure the earth at every location. Because a reference ellipsoid is an approximation, there are locations where an ellipsoid exactly matches the geoid and there are locations where an ellipsoid is way way off. In some of these locations, a different reference ellipsoid is used that better matches the earth’s surface at those locations.</notes>
+  </div>
+  <div>Okay, so now we've picked our <strong>reference ellipsoid</strong>. What's next?</div>
+  <div data-bodyclass='background-repeat'><img src='https://img.buzzfeed.com/buzzfeed-static/static/2014-02/enhanced/webdr03/25/12/anigif_enhanced-19588-1393350366-12.gif'>Puppies!</div>
+  <div>Once we've defined our <em>reference ellipsoid</em>, we have a shape on which we can place a <strong>coordinate system</strong>.
+  </div>
+  <div>
+    A <strong>coordinate system</strong> defines locations on that surface that can be used as <em>reference points</em> for measurement.
+    <notes>This is huge — imagine trying to tell someone how to get to your house without using miles, meters, or any other standardized system of measurement. Imagine trying to assess property values without the concept of acres and square footage. A coordinate system is a way to standardize the way we describe locations on a map. It’s the common understanding that allows a person to go out in the world, measure some stuff, and know with confidence that the measurements they took will show up in the right place on any map that anyone creates with that data.</notes>
+  </div>
+  <div>
+    <em>Coordinate systems let us do this:</em>
+    <br />
+    <img src='https://d2mxuefqeaa7sj.cloudfront.net/s_9F4AD171844C3ED7BEA0576DEA6B40C1F73FB55B727BF153214AFDDBD85A8F35_1495827067732_projected.jpg' />
+  </div>
+  <div>There are <em>two</em> types of coordinate systems:
+    <ul>
+      <li><strong>Geographic</strong> coordinate systems</li>
+      <li><strong>Projected</strong> coordinate systems</li>
+    </ul>
+  </div>
+  <div><strong>Geographic</strong> coordinate systems are a combination of three things:
+    <ol>
+      <li>A <em>unit of measurement</em> for angles (we use degrees)</li>
+      <li>A <em>prime meridian</em></li>
+      <li>A <em>geodetic datum</em></li>
+    </ol>
+    <notes>When we use terms like longitude and latitude, we're referring to locations using a geographic coordinate system.</notes>
+  </div>
+  <div>The <em>datum</em> is the mathematical equation that connects our <strong>reference ellipsoid</strong> to the Earth's surface.<br /><br /><center><img style='width:50%' src='https://www.e-education.psu.edu/natureofgeoinfo/sites/www.e-education.psu.edu.natureofgeoinfo/files/image/long_lat.gif'></center><notes>Because, as we discussed before, the reference ellipsoid is not related to the Earth's surface in a regular way in every location, certain datums are going to work better for different parts of the planet just as certain ellipsoids work better for different parts of the planet.</notes></div>
+  <div><strong>Projected</strong> coordinate systems are like geographic coordinate systems, but different.</div>
+<div>They are also a <em>grid</em> used as a reference for locations on the planet, but translate the <strong>three-dimensional grid</strong> to a <strong>two-dimensional plane</strong> (like a piece of paper or a screen).</div>
+  <div data-background-image='https://www.atlasandboots.com/wp-content/uploads/2017/05/map-projections-types.jpg'>
+    <notes>One way to visualize it is to imagine a light emanating out from the center of that reference ellipsoid, and a piece of paper is wrapped around that ellipsoid, whether in a cone, or in a cylinder, or some other shape. The places where the shadows from the coordinates appear on that piece of paper defines the projection, and when you unwrap the paper and lay it flat again, those points the coordinate system for your projected data.</notes>
+  </div>
+  <div>A projected coordinate system is the <em>mathematical definition</em> of a projection.<notes>Note: a projected coordinate system includes a lot more definitions than just the projection. These include the center of the projection, scale factor, and others.</notes></div>
+  <div><strong>Not discussed here:</strong> vertical coordinate systems.</div>
+  <div>Mid-talk recap:
+    <br />
+    <ul>
+      <li>To make maps, we need to have a <em>common system for measurement</em></li>
+      <li>To make that <em>common system for measurement</em>, we need to define a <strong>reference ellipsoid</strong></li>
+      <li>Once we have our <strong>reference ellipsoid</strong>, we can decide on a <span style='color:#0B877D'>coordinate system</span></li>
+    </ul>
+  </div>
+  <div>2. Okay. So what about <em>web maps</em>?</div>
+  <div>WAIT FIRST:</div>
+  <div>1.5. What are these <span style='color:#0B877D'>EPSG codes</span> I keep hearing about?</div>
+  <div>European Petroleum Survey Group
+    <br />
+    <center><img style='width:50%;' src='https://d2mxuefqeaa7sj.cloudfront.net/s_9F4AD171844C3ED7BEA0576DEA6B40C1F73FB55B727BF153214AFDDBD85A8F35_1495755459475_iogp.jpg' /></center>
+
+    <notes>Quick note on naming: coordinate systems (projected and geographic) are often identified by an EPSG code. EPSG stands for European Petroleum Survey Group, an organization involved in best practices for surveying and applied geodesy. In 2005, EPSG was absorbed into the International Association of Oil & Gas Producers (IOGP), but the list of coordinate systems they maintained is still called the EPSG Geodetic Parameter Dataset.</notes></div>
+  <div>2. Okay. So what about <em>web maps</em>?
+    <br />
+    <center><img style='width:50%' src='https://www.mapbox.com/maps/mobile.png' /></center>
+  </div>
+  <div>There are <em>two</em> coordinate systems we need to think about when it comes to web maps: <strong>EPSG:4326 (WGS 84)</strong> and <span style='color:#0B877D'>EPSG:3857 (Web Mercator/Pseudo Mercator)</span>. They are <em>both</em> used in web mapping, but in <em>different</em> ways.</div>
+  <div>
+    <strong>WGS 84 (World Geodetic System of 1984; EPSG: 4326)</strong> is the <em>geographic</em> coordinate system (the three-dimensional one) used by <span style='color:#0B877D'>GPS</span> to express locations on the earth. Also used in <span style='color:#0B877D'>GeoJSON</span>.
+    <notes>WGS84 is the defined coordinate system for GeoJSON, as longitude and latitude in decimal degrees. For the most part, when you describe a lon/lat coordinate location, it’s based on the EPSG:4326 coordinate system. This is how we store data at Mapbox and how data should be stored for web mapping.</notes>
+  </div>
+  <div data-background-image='https://vdatum.noaa.gov/images/docs/clarke1866_wgs84_grs80.gif'></div>
+  <div>
+    There is <em>no way</em> to visualize the WGS84 coordinate system on a <span style='color:#0B877D'>two-dimensional plane (map)</span>, so most software programs project these coordinates using an <strong>equirectangular</strong> projection (Plate-Carrée).<br /><br />
+    <center><img style='width:50%' src='https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg' /></center>
+  </div>
+  <div>
+    <em>Web Mercator (or Pseudo Mercator; EPSG:3857)</em> takes the <strong>WGS 84 coordinate system</strong> and puts it on a <span style='color:#0B877D'>square</span>.<br /><br /><center><img src='https://d2mxuefqeaa7sj.cloudfront.net/s_9F4AD171844C3ED7BEA0576DEA6B40C1F73FB55B727BF153214AFDDBD85A8F35_1495755444239_tiles.jpg' style='width:50%' /></center>
+  </div>
+  <div><em>But not all of it!</em> The bounds of Web Mercator are limited to approximately <span style='color:#0B877D'>85.06º North and South latitude</span>.</div>
+  <div><strong>Web Mercator</strong> was first introduced by Google (web mapping pioneers) and is used in <span style='color:#0B877D'>almost 100% of web maps</span>, but it is <em>strange</em>.</div>
+  <div>It uses the <strong>WGS 84 coordinate system</strong>, which uses the WGS 84 ellipsoid, but then goes <span style='color:#0B877D'>another step</span> and projects the coordinates onto a <em>sphere</em>.</div>
+  <div>Two ellipsoids?!
+    <br />
+    <img src='https://media1.giphy.com/media/Ocy63vfZfLaUM/giphy.gif'>
+  </div>
+  <div>Why Web Mercator? <em>Pros:</em>
+    <ul>
+      <li>it makes the map into a <strong>square</strong></li>
+      <li>it's the <strong>industry standard</strong></li>
+      <li>it preserves <strong>directionality</strong></li>
+      <li>it enables a global map that <strong>mostly looks good</strong> most places where there are people</li>
+    </ul>
+  </div>
+  <div>"[T]echnology is a result of its environment and requirements, not any absolute value: spherical mercator fits the role of a simple, fast, pannable, and zoomable projection like no other common projection." - <a href='https://macwright.org'>Tom MacWright</a></div>
+  <div><strong>Cons:</strong>
+    <ul>
+      <li>it's <span style='color:#0B877D'>not attractive</span></li>
+      <li>it <span style='color:#0B877D'>doesn't</span> cover the whole planet</li>
+      <li>there is <span style='color:#0B877D'>no programmatic way</span> to represent a coordinate system that relies on two different ellipsoids</li>
+    </ul>
+    <notes>which means software programs have to improvise. And when software programs improvise, there is no way to know if the coordinates are consistent across programs. This makes EPSG:3857 great for visualizing on computers (have I mentioned computers dig squares) but not reliable for data storage or analysis.</notes>
+  </div>
+  <div>So. <span style='color:#0B877D'>What do we do?</span></div>
+  <div>We <em>store</em> data in WGS 84 (EPSG:4326), but <strong>display</strong> it in Web Mercator (EPSG:3857).</div>
+  <div class='blink'>We <em>store</em> data in WGS 84 (EPSG:4326), but <strong>display</strong> it in Web Mercator (EPSG:3857).</div>
+  <div>(Yes, that's what we've been leading up to.)</div>
+  <div>What does this mean for <strong>you</strong> when making web maps?</div>
+  <div>1. If you're making a (typical) web map, <em>store your data in geographic (unprojected) coordinates</em>.</div>
+  <div><em>2. Do not store your data in Web Mercator</em>, <strong>especially</strong> if you're trying to do analysis on it.</div>
+  <div>3. If someone says they want to see their data in WGS 84, <em>project it onto Platte-Carré</em> for them. (Then maybe ask them <span style='color:#0B877D'>why</span> they want that.)</div>
+  <div>4. If you're <em>upset</em> that you can't easily make web maps in other projections, guess what? <strong>You can!</strong> Just not with out-of-the-box, point-and-click tools.</div>
+  <div>Ultimately, these standards allow us to use geospatial data more deeply: they give us a common system to communicate, build tools, and grow/learn/play together in harmony.<br /><br /><center><img src='https://d2mxuefqeaa7sj.cloudfront.net/s_9F4AD171844C3ED7BEA0576DEA6B40C1F73FB55B727BF153214AFDDBD85A8F35_1495827231890_sharemap.jpg' style='width:50%' /></center></div>
+  <div>So when you're upset about Web Mercator, remember that we're using it for the greater good! 💕💖💗</div>
+  <div>
+    Thanks!
+    <br />
+    <img style='width:50%' src='http://78.media.tumblr.com/tumblr_lyf0ph4tyH1r6s66vo1_500.gif'>
+    <small class='nobreak'>I am <a href='https://twitter.com/lyzidiamond'>@lyzidiamond</a> on Twitter</small>
+    <small class='nobreak'>Go to <a href='http://lyzidiamond.com/nacis-2017'>lyzidiamond.com/nacis-2017</a> for slides</small>
+  </div>
+
+
+
+
+
+</body>
+</html>
