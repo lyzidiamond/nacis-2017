@@ -274,7 +274,7 @@
     n(u) ||
       (L.useBR
         ? ((t = document.createElementNS(
-            'http://www.w3.org/1999/xhtml',
+            'https://www.w3.org/1999/xhtml',
             'div'
           )), (t.innerHTML = e.innerHTML
             .replace(/\n/g, '')
@@ -283,7 +283,7 @@
         t
       )), r.length &&
         ((s = document.createElementNS(
-          'http://www.w3.org/1999/xhtml',
+          'https://www.w3.org/1999/xhtml',
           'div'
         )), (s.innerHTML = a.value), (a.value = o(r, c(s), l))), (a.value = p(
         a.value
